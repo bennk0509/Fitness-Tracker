@@ -1,8 +1,17 @@
+//
+//  AddWorkoutSessionViewModel.swift
+//  FitnessApp
+//
+//  Created by Khanh Anh Kiet Nguyen on 2025-11-19.
+//
+
+
 import SwiftUI
 
-class AddWorkoutSessionViewModel: ObservableObject {
-    @Published var session = WorkoutSession()
-    @Published var elapsedTime: TimeInterval = 0
+@Observable
+class AddWorkoutSessionViewModel {
+    var session = WorkoutSession()
+    var elapsedTime: TimeInterval = 0
     
     private var timer: Timer?
     

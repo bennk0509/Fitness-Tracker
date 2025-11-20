@@ -1,3 +1,11 @@
+//
+//  WorkoutSet.swift
+//  FitnessApp
+//
+//  Created by Khanh Anh Kiet Nguyen on 2025-11-19.
+//
+
+
 import Foundation
 
 struct WorkoutSet: Identifiable {

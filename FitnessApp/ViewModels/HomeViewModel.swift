@@ -7,12 +7,43 @@
 
 import SwiftUI
 
-struct HomeViewModel: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+struct Workout: Identifiable {
+    let id = UUID()
+    let name: String
+    let duration: Int       // minutes
+    let calories: Int
+    let date: Date
+    let intensity: String?
 }
 
-#Preview {
-    HomeViewModel()
+let sampleWorkouts: [Workout] = [
+    Workout(
+        name: "Full Body Strength",
+        duration: 25,
+        calories: 240,
+        date: Date(),
+        intensity: "Intermediate"
+    ),
+    Workout(
+        name: "HIIT 10-Min Blast",
+        duration: 10,
+        calories: 150,
+        date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
+        intensity: "Intense"
+    ),
+    Workout(
+        name: "Yoga Flow",
+        duration: 20,
+        calories: 90,
+        date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!,
+        intensity: "Light"
+    )
+]
+
+@Observable
+class HomeViewModel{
+    var move: Int = 5000;
+    var exercise: Int = 25;
+    var caloriesBurned: Int = 1250;
+    var workouts: [Workout] = sampleWorkouts;
 }

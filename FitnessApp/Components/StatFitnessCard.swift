@@ -12,7 +12,6 @@ struct StatFitnessCard: View {
     @Binding var number: Int;
     var text: String;
     var unit: String?;
-    var color: Color;
     var body: some View {
         VStack(alignment: .leading){
             HStack{
@@ -20,28 +19,29 @@ struct StatFitnessCard: View {
                 Image(systemName: iconName)
                 .font(.system(size: 18, weight: .semibold))
                 .frame(width: 40, height: 40)
+                .foregroundColor(.black)
                 .background(
                     Circle().fill(Color.white)
                 )
             }
             VStack(alignment: .leading, spacing: 5){
                 HStack(alignment:.lastTextBaseline, spacing: 3){
-                    Text("\(number)").font(.system(size: 15, weight: .bold))
+                    Text("\(number)").font(.system(size: 18, weight: .bold))
                     if let unit = unit {
                         Text(unit)
                             .font(.system(size: 15, weight: .bold))
                     }
                 }
                 Text(text).font(.system(size: 13))
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(.gray)
             }.padding(10)
             
         }.padding(4)
-            .background(Color(color.opacity(0.1)))
+            .background(Color("DarkGray"))
             .cornerRadius(21)
     }
 }
 
 #Preview {
-    StatFitnessCard(iconName: "figure.walk", number: .constant(6823), text: "Steps", color: .green)
+    StatFitnessCard(iconName: "figure.walk", number: .constant(6823), text: "Steps")
 }

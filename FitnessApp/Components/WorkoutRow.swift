@@ -12,7 +12,7 @@ struct WorkoutRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 14) {
                 Text(workout.name)
                     .font(.headline)
                 VStack(alignment: .leading, spacing: 6) {
@@ -47,8 +47,8 @@ struct WorkoutRow: View {
 
             Spacer()
         }
-        .padding()
-        .background(Color.gray.opacity(0.05))
+        .padding(20)
+        .background(Color("DarkGray"))
         .cornerRadius(20)
         .shadow(color: .gray.opacity(0.06), radius: 4, x: 0, y: 2)
     }

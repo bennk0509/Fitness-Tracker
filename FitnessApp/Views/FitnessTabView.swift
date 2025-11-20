@@ -15,18 +15,28 @@ struct FitnessTabView: View {
     var body: some View {
 
         NavigationStack {
-
             ZStack(alignment: .bottomTrailing) {
-
+                Color.black
+                    .ignoresSafeArea()
+                
                 TabView {
                     HomeView()
                         .tabItem {
                             Label("Home", systemImage: "house.fill")
                         }
-
+                    
+                    PlanView()
+                        .tabItem {
+                            Label("Plan", systemImage: "calendar")
+                        }
+                    
                     Text("Account")
                         .tabItem {
                             Label("Account", systemImage: "person.crop.circle")
+                        }
+                    Text("Plan")
+                        .tabItem {
+                            Label("Analysis", systemImage: "chart.bar.xaxis")
                         }
                 }
 
@@ -43,10 +53,11 @@ struct FitnessTabView: View {
                 .padding(.trailing, 24)
                 .padding(.bottom, 40)
             }
-
             .navigationDestination(isPresented: $goToAddSession) {
+                AddWorkoutSessionView()
             }
         }
+
     }
 }
 

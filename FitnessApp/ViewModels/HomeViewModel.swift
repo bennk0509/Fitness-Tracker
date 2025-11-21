@@ -7,43 +7,29 @@
 
 import SwiftUI
 
-struct Workout: Identifiable {
-    let id = UUID()
-    let name: String
-    let duration: Int       // minutes
-    let calories: Int
-    let date: Date
-    let intensity: String?
-}
 
-let sampleWorkouts: [Workout] = [
-    Workout(
-        name: "Full Body Strength",
-        duration: 25,
-        calories: 240,
-        date: Date(),
-        intensity: "Intermediate"
-    ),
-    Workout(
-        name: "HIIT 10-Min Blast",
-        duration: 10,
-        calories: 150,
-        date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
-        intensity: "Intense"
-    ),
-    Workout(
-        name: "Yoga Flow",
-        duration: 20,
-        calories: 90,
-        date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!,
-        intensity: "Light"
-    )
-]
 
 @Observable
 class HomeViewModel{
-    var move: Int = 5000;
-    var exercise: Int = 25;
-    var caloriesBurned: Int = 1250;
-    var workouts: [Workout] = sampleWorkouts;
+    private let workoutRepository: WorkoutRepository
+    private let activityRepository: ActivityRepository
+    
+    var workouts: [Workout] = []
+    var dailyActivity: Activity = Activity(steps: 0, calories: 0, exercise: 0)
+    
+    init(workoutRepository: WorkoutRepository, activityRepository: ActivityRepository) {
+        self.workoutRepository = workoutRepository
+        self.activityRepository = activityRepository
+        fetchInitialData()
+    }
+    
+    // VIEWMODEL thì có fetch data không ạ?
+    private func fetchInitialData(){
+        workouts = workoutRepository.fetchAllWorkouts()
+        dailyActivity = activityRepository.getDailyActivity()
+    }
+    
+    
+    
+   
 }

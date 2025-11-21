@@ -20,7 +20,7 @@ struct FitnessTabView: View {
                     .ignoresSafeArea()
                 
                 TabView {
-                    HomeView()
+                    HomeView(workoutRepository: MockUpWorkoutRepository(), activityRepository: MockupActivityRepository())
                         .tabItem {
                             Label("Home", systemImage: "house.fill")
                         }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WorkoutRow: View {
-    var workout: Workout
+    var workout: WorkoutSession
 
     var body: some View {
         HStack(alignment: .top, spacing: 14) {

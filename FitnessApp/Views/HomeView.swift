@@ -8,16 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var vm: HomeViewModel;
-    
-    init(workoutRepository: WorkoutRepository,activityRepository: ActivityRepository ) {
-        self._vm = State(
-            initialValue: HomeViewModel(
-                workoutRepository: workoutRepository,
-                activityRepository: activityRepository
-            )
-        )
-    }
+    @State var vm: HomeViewModel;
     
     var body: some View {
         ZStack{
@@ -64,7 +55,6 @@ struct HomeView: View {
 
 #Preview {
     HomeView(
-        workoutRepository: MockUpWorkoutRepository(),
-        activityRepository: MockupActivityRepository()
+        vm: HomeViewModel(getAllWorkouts: GetAllWorkouts(repository: MockUpWorkoutRepository()), getDailyActivity: GetDailyActivity(repository: MockupActivityRepository()))
     )
 }

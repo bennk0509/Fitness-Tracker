@@ -20,7 +20,9 @@ struct FitnessTabView: View {
                     .ignoresSafeArea()
                 
                 TabView {
-                    HomeView(workoutRepository: MockUpWorkoutRepository(), activityRepository: MockupActivityRepository())
+                    HomeView(
+                        vm: HomeViewModel(getAllWorkouts: GetAllWorkouts(repository: MockUpWorkoutRepository()), getDailyActivity: GetDailyActivity(repository: MockupActivityRepository()))
+                    )
                         .tabItem {
                             Label("Home", systemImage: "house.fill")
                         }
@@ -52,9 +54,6 @@ struct FitnessTabView: View {
                 }
                 .padding(.trailing, 24)
                 .padding(.bottom, 40)
-            }
-            .navigationDestination(isPresented: $goToAddSession) {
-                AddWorkoutSessionView()
             }
         }
 

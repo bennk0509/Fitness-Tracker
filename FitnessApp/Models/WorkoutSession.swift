@@ -16,6 +16,9 @@ struct WorkoutSession: Identifiable, Codable {
     var duration: Int
     var calories: Int
     var intensity: String?
+    var startedAt: Date?
+    var endedAt: Date?
+    var description: String?
     var exercises: [Exercise]
     
     init(id: UUID = UUID(),

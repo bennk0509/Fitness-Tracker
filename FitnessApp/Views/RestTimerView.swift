@@ -5,38 +5,49 @@
 //  Created by Khanh Anh Kiet Nguyen on 2025-11-20.
 //
 
-
 import SwiftUI
 
 struct RestTimerView: View {
     @Binding var isShown: Bool
     @Binding var minutes: Int
-    
+
+    var minMinutes: Int = 0 
+    var maxMinutes: Int = 30
+    var step: Int = 1
+    var onSave: ((Int) -> Void)? = nil
+
     var body: some View {
         VStack(spacing: 20) {
-    
+
             HStack(spacing: 12) {
                 Text("Rest timer")
-                    .font(.title3.bold())
+                    .font(.title.bold())
                 Spacer()
+
+                Button {
+                    isShown = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(.secondary)
+                        .padding(8)
+                }
             }
-            
+
             Text("Set how much you want to rest between two sets for this workout.")
                 .foregroundColor(.gray)
                 .font(.callout)
                 .padding(.bottom, 10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             Text("Minutes")
                 .font(.callout.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             // Timer control
             HStack(spacing: 40) {
-                
+
                 // Minus
                 Button {
-                    if minutes > 1 { minutes -= 1 }
+                    minutes = max(minMinutes, minutes - step)
                 } label: {
                     Circle()
                         .fill(Color.gray.opacity(0.2))
@@ -46,15 +57,17 @@ struct RestTimerView: View {
                                 .font(.title3.bold())
                         )
                 }
-                
-                // Time display (3:00 style)
-                Text(String(format: "%d:00", minutes))
+                .disabled(minutes <= minMinutes)
+                .opacity(minutes <= minMinutes ? 0.5 : 1)
+
+                // Time display
+                Text(minutes == 0 ? "Off" : String(format: "%d:00", minutes))
                     .font(.system(size: 50, weight: .semibold))
                     .monospacedDigit()
-                
+
                 // Plus
                 Button {
-                    minutes += 1
+                    minutes = min(maxMinutes, minutes + step)
                 } label: {
                     Circle()
                         .fill(Color.gray.opacity(0.2))
@@ -64,11 +77,14 @@ struct RestTimerView: View {
                                 .font(.title3.bold())
                         )
                 }
+                .disabled(minutes >= maxMinutes)
+                .opacity(minutes >= maxMinutes ? 0.5 : 1)
             }
             .padding(.vertical, 10)
-            
+
             // Save button
             Button {
+                onSave?(minutes)
                 isShown = false
             } label: {
                 Text("Save")
@@ -80,13 +96,9 @@ struct RestTimerView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 25))
             }
             .padding(.top, 10)
-            
+
         }
+        .foregroundStyle(.black)
         .padding()
-        .padding(.bottom, 50)
-        .frame(maxWidth: .infinity)
-        .frame(height: 350)
-        .background(Color("DarkGray"))
-        .clipShape(RoundedRectangle(cornerRadius: 28))
     }
 }

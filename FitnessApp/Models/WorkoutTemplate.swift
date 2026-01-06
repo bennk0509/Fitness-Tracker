@@ -32,4 +32,17 @@ extension WorkoutTemplate{
                     templateID: id
                 )
     }
+    
+    func toWorkoutSession(exercises: [ExerciseTemplate]) -> WorkoutSession {
+        let exercises = exercises.map { $0.toExercise() }
+        return WorkoutSession(
+                name: name,
+                duration: 0,
+                calories: 0,
+                date: Date(),
+                intensity: nil,
+                exercises: exercises,
+                templateID: id
+            )
+    }
 }

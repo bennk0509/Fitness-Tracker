@@ -7,102 +7,73 @@
 
 import SwiftUI
 
-struct ShowWorkoutTemplate: View {
-    @State private var searchText: String = ""
-    let templates: [WorkoutTemplate]
-    
-    @State private var expanded: [UUID: Bool] = [:]
-    
-    var body: some View {
-        
-        VStack(spacing:20){
-            HStack{
-                Text("Library")
-                    .font(Font.largeTitle)
-                    .bold()
-                Spacer()
-            }
-            
-            HStack(spacing:20){
-                Text("Workouts")
-                    .font(Font.callout)
-                    .bold()
-                Text("Your workout")
-                    .font(Font.callout)
-                    .bold()
-                    .foregroundColor(.gray)
-                Spacer()
-            }
-            HStack{
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
+struct WorkoutCard: View {
+    let title: String
+    let count: Int
+    let imageName: String
+    let gradientColors: [Color]
 
-                    TextField("Search exercise", text: $searchText)
-                        .foregroundColor(.white)
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(Color("DarkGray"))
-                .cornerRadius(20)
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    LinearGradient(
+                        colors: gradientColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            Image(imageName)
+                .resizable()
+                .scaledToFill()
+                .opacity(0.30)
+                .blendMode(.overlay)
+                .clipped()
+            
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.white)
+
+                Text("\(count) exercises")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.8))
             }
-            ScrollView {
-                LazyVStack{
-                    ForEach(templates){ template in
-                        VStack{
-                            HStack{
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(template.name)
-                                        .font(.system(size: 18, weight: .semibold))
-                                    
-                                    Text("\(template.defaultExercises.count) exercises")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.gray)
-                                }
-                                
-                                Spacer()
-                                Button {
-                                    withAnimation(.spring()) {
-                                        expanded[template.id]?.toggle()
-                                    }
-                                } label: {
-                                    Image(systemName: expanded[template.id] == true ? "chevron.down" : "chevron.right")
-                                    .foregroundColor(.gray)
-                                }
-                            }
-                            
-                            if(expanded[template.id] == true)
-                            {
-                                HStack{
-                                    VStack(alignment: .leading, spacing: 4){
-                                        ForEach(template.defaultExercises){ exercise in
-                                            Text(exercise.name)
-                                                .font(.system(size: 16))
-                                                .foregroundColor(.gray)
-                                        }
-                                    }
-                                    Spacer()
-                                }
-                                .padding(4)
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                            }
-                            
-                        }
-                        .padding()
-                        .onAppear {
-                            if expanded[template.id] == nil {
-                                expanded[template.id] = false
-                            }
-                        }
-                    }
-                    
-                }
-            }
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding()
+        }
+        .aspectRatio(1, contentMode: .fit)
     }
 }
 
 
+struct WorkoutGrid: View{
+    var body: some View {
+        LazyVGrid(
+            columns: [
+                GridItem(.flexible(), spacing: 14),
+                GridItem(.flexible(), spacing: 14)
+            ],
+            spacing: 14
+        ) {
+            WorkoutCard(
+                title: "Full Body Strength",
+                count: 3,
+                imageName: "template1",
+                gradientColors: [Color.red, Color.orange]
+            )
+
+            WorkoutCard(
+                title: "Chest Day",
+                count: 2,
+                imageName: "template2",
+                gradientColors: [Color.red, Color.orange]
+            )
+            
+        }
+    }
+}
+
 #Preview {
-    ShowWorkoutTemplate(templates: sampleWorkoutTemplates)
+    WorkoutGrid()
 }

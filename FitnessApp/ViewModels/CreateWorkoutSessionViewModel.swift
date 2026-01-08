@@ -22,8 +22,13 @@ class CreateWorkoutSessionViewModel {
     let totalSteps: Int = 3
     var isTemplate: Bool = false
     
-    var workoutTemplates: [WorkoutTemplate] = []
     
+    
+    var workoutTemplates: [WorkoutTemplate] = []
+    var selectedTemplate: WorkoutTemplate? = nil
+    
+    
+    var editedExercises: [ExerciseTemplate] = []
     
     init(
         createWorkoutSessionFromTemplate: CreateWorkoutSessionFromTemplate,
@@ -33,12 +38,14 @@ class CreateWorkoutSessionViewModel {
             self.createWorkoutSessionFromTemplate = createWorkoutSessionFromTemplate
             self.createWorkoutSessionNotFromTemplate = createWorkoutSessionNotFromTemplate
             self.getAllWorkoutTemplate = getAllWorkoutTemplate
-            
             getTemplates()
     }
     
     // FLOW A: Create from template
-    func createFromTemplate(templateID: UUID) {
+    func createFromTemplate() {
+        guard isTemplate else {return}
+        guard let templateID = selectedTemplate?.id else {return}
+
         let workoutSession = createWorkoutSessionFromTemplate.execute(templateId: templateID)
         createdSession = workoutSession
     }
@@ -64,4 +71,14 @@ class CreateWorkoutSessionViewModel {
     func previousStep() {
         if currentStep > 1 { currentStep -= 1 }
     }
+    
+    func selectedTemplate(_ template: WorkoutTemplate)
+    {
+        
+        selectedTemplate = template
+        editedExercises = template.defaultExercises
+        currentStep = 3
+    }
+    
+
 }

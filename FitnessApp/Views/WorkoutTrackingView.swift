@@ -13,14 +13,12 @@ struct WorkoutTrackingView: View {
     
     @State private var vm: WorkoutTrackingViewModel
     @FocusState private var focusedField: FocusedField?
-    
-    @State private var showRestPicker = false
-    @State private var restMinutes = 0
-    
+        
     init(sessionId: UUID, makeVM: @escaping (UUID) -> WorkoutTrackingViewModel) {
         self.sessionId = sessionId
         self._vm = State(wrappedValue: makeVM(sessionId))
     }
+    
     var body: some View {
         ZStack{
             Color.black.ignoresSafeArea()
@@ -101,15 +99,15 @@ struct WorkoutTrackingView: View {
                                 }
                                 
                                 Button {
-                                    showRestPicker = true
+                                    vm.showRestPicker = true
                                 } label: {
-                                    Text(restMinutes == 0 ? "Rest Off" : "Rest \(restMinutes)m")
+                                    Text(vm.restMinutes == 0 ? "Rest Off" : "Rest \(vm.restMinutes)s")
                                         .font(.caption.bold())
                                         .padding(.horizontal, 14)
                                         .padding(.vertical, 6)
                                         .background(
                                             RoundedRectangle(cornerRadius: 8)
-                                                .fill(restMinutes == 0 ? Color.white.opacity(0.10) : Color.orange.opacity(0.35))
+                                                .fill(vm.restMinutes == 0 ? Color.white.opacity(0.10) : Color.orange.opacity(0.35))
                                         )
                                 }
                                 
@@ -161,16 +159,23 @@ struct WorkoutTrackingView: View {
                                                     RoundedRectangle(cornerRadius: 8)
                                                         .stroke(Color.white.opacity(0.2), lineWidth: 1.5)
                                                 )
-                                            Image(systemName: "trash.fill")
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                                .frame(width: 36, alignment: .center)
+                                            Button{
+                                                vm.finishSet(exerciseId: ex.id, setId: set.id)
+                                            } label: {
+                                                Image(systemName: "checkmark.square")
+    //                                            Image(systemName: "trash.fill")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .font(.caption)
+                                                    .foregroundStyle(.secondary)
+                                                    .frame(width: 36, height: 20, alignment: .center)
+                                            }
+                                            
                                         }
                                     }
                                 }
                                 Button {
-//                                    vm.addNewSet(exerciseId: ex.id)
-                                    print("Add New Set")
+                                    vm.addSet(exerciseID: ex.id)
                                 } label: {
                                     Label("ADD SET", systemImage: "plus")
                                         .font(.subheadline.weight(.semibold))
@@ -189,8 +194,7 @@ struct WorkoutTrackingView: View {
                 }
 
                 Button {
-//                    vm.addNewExercise()
-                    print("Add New Exercise")
+                    
                 } label: {
                     Label("Add New Exercise", systemImage: "plus.circle.fill")
                         .font(.headline)
@@ -207,8 +211,8 @@ struct WorkoutTrackingView: View {
                 vm.load()
             }
 
-        }.sheet(isPresented: $showRestPicker) {
-            RestTimerView(isShown: $showRestPicker, minutes: $restMinutes) { newMinutes in
+        }.sheet(isPresented: $vm.showRestPicker) {
+            RestTimerView(isShown: $vm.showRestPicker, minutes: $vm.restMinutes) { newMinutes in
 //                if newMinutes == 0 {
 //                    vm.stopRest()
 //                } else {
@@ -218,6 +222,16 @@ struct WorkoutTrackingView: View {
             .presentationDetents([.height(350)])
             .presentationDragIndicator(.visible)
         }
+        .onAppear{
+            vm.fetchDataWith(id)
+        }
+        .sheet(item: $vm.restRequest) { req in
+            RestCountdownView(totalSeconds: req.seconds) {
+                vm.clearRest()
+            }.presentationDetents([.height(350)])
+                .presentationDragIndicator(.visible)
+        }
+        
         .foregroundColor(.white)
     }
 

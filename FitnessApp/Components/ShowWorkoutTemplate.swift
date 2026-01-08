@@ -9,9 +9,14 @@ import SwiftUI
 
 struct ShowWorkoutTemplate: View {
     @State private var searchText: String = ""
+    @Binding var currentStep: Int
     let templates: [WorkoutTemplate]
+    
+    let onSelect: (WorkoutTemplate) -> Void
+    
+    @State private var expanded: [UUID: Bool] = [:]
+    
     var body: some View {
-        
         VStack(spacing:20){
             HStack{
                 Text("Library")
@@ -43,38 +48,65 @@ struct ShowWorkoutTemplate: View {
                 .background(Color("DarkGray"))
                 .cornerRadius(20)
             }
+                
             ScrollView {
                 LazyVStack{
                     ForEach(templates){ template in
-                        HStack{
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(template.name)
-                                    .font(.system(size: 18, weight: .semibold))
+                        Button{
+                            onSelect(template)
+                        } label: {
+                        VStack{
+                            HStack{
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(template.name)
+                                        .font(.system(size: 18, weight: .semibold))
+
+                                    if(expanded[template.id] == false)
+                                    {
+                                        Text("\(template.defaultExercises.count) exercises")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
                                 
-                                Text("\(template.defaultExercises.count) exercises")
-                                    .font(.system(size: 14))
+                                Spacer()
+                                Button {
+                                    withAnimation(.spring()) {
+                                        expanded[template.id]?.toggle()
+                                    }
+                                } label: {
+                                    Image(systemName: expanded[template.id] == true ? "chevron.down" : "chevron.right")
                                     .foregroundColor(.gray)
+                                }
                             }
                             
-                            Spacer()
+                            if(expanded[template.id] == true)
+                            {
+                                HStack{
+                                    VStack(alignment: .leading, spacing: 10){
+                                        ForEach(template.defaultExercises){ exercise in
+                                            Text(exercise.name)
+                                                .font(.system(size: 16))
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                .padding(4)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
                             
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
                         }
                         .padding()
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 20)
-//                                .fill(Color("DarkGray"))
-//                        )
+                        .onAppear {
+                            if expanded[template.id] == nil {
+                                expanded[template.id] = false
+                            }
+                        }
                     }
-                    
                 }
+            }
             }
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-}
-
-
-#Preview {
-    ShowWorkoutTemplate(templates: sampleWorkoutTemplates)
 }

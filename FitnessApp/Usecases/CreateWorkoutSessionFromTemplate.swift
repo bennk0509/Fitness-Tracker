@@ -27,4 +27,14 @@ final class CreateWorkoutSessionFromTemplate{
         
         return newWorkoutSession
     }
+    
+    func execute(templateId: UUID, editedExercises: [ExerciseTemplate]) -> WorkoutSession? {
+            guard let workoutTemplate = workoutTemplateRepository.fetchTemplate(by: templateId) else { return nil }
+            let exercisesToUse = editedExercises.isEmpty ? workoutTemplate.defaultExercises : editedExercises
+
+            let newWorkoutSession = workoutTemplate.toWorkoutSession(exercises: exercisesToUse)
+
+            workoutSessionRepository.saveWorkout(newWorkoutSession)
+            return newWorkoutSession
+        }
 }

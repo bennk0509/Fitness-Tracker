@@ -36,14 +36,28 @@ struct FitnessTabView: View {
                         .tabItem {
                             Label("Account", systemImage: "person.crop.circle")
                         }
-                    Text("Plan")
-                        .tabItem {
-                            Label("Analysis", systemImage: "chart.bar.xaxis")
-                        }
+                    PreWorkoutView(
+                        vm: CreateWorkoutSessionViewModel(
+                            createWorkoutSessionFromTemplate:
+                                CreateWorkoutSessionFromTemplate(workoutSessionRepository: MockUpWorkoutRepository(), workoutTemplateRepository: MockupWorkoutTemplateRepository()),
+                            createWorkoutSessionNotFromTemplate:
+                                CreateWorkoutSessionNotFromTemplate(workoutSessionRepository: MockUpWorkoutRepository(), workoutTemplateRepository: MockupWorkoutTemplateRepository()),
+                            getAllWorkoutTemplate:
+                                GetAllWorkoutTemplate(repository: MockupWorkoutTemplateRepository())),
+                        makeTrackingVM: { sessionID in
+                                WorkoutTrackingViewModel(
+                                    sessionId: sessionID,
+                                    getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository())
+                                )
+                            }
+                    )
+                    .tabItem {
+                        Label("Analysis", systemImage: "chart.bar.xaxis")
+                    }
                 }
 
                 Button {
-                    goToAddSession = true
+
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 26, weight: .bold))
@@ -52,8 +66,8 @@ struct FitnessTabView: View {
                         .background(Color.blue)
                         .clipShape(Circle())
                 }
-                .padding(.trailing, 24)
-                .padding(.bottom, 40)
+                .padding(.trailing, 20)
+                .padding(.bottom, 60)
             }
         }
 

@@ -9,13 +9,22 @@ import SwiftUI
 
 struct PreWorkoutView: View {
     @State var vm: CreateWorkoutSessionViewModel;
+    let makeTrackingVM: (UUID) -> WorkoutTrackingViewModel
+    init(
+        vm: CreateWorkoutSessionViewModel,
+        makeTrackingVM: @escaping (UUID) -> WorkoutTrackingViewModel
+    ) {
+        self._vm = State(wrappedValue: vm)
+        self.makeTrackingVM = makeTrackingVM
+    }
     
     
     var body: some View {
-        ZStack{
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 30) {
-                
+        if let sessionID = vm.createdSession?.id {
+           WorkoutTrackingView(sessionId: sessionID, makeVM: makeTrackingVM)
+        } else{
+            VStack(spacing:30) {
+            
                 // STEP PROGRESS BAR
                 StepProgressBar(step: vm.currentStep, total: vm.totalSteps)
                 
@@ -29,54 +38,75 @@ struct PreWorkoutView: View {
                     if vm.currentStep == 2 {
                         if(vm.isTemplate)
                         {
-                            ShowWorkoutTemplate(templates: vm.workoutTemplates)
+                            ShowWorkoutTemplate(currentStep: $vm.currentStep,
+                                                templates: vm.workoutTemplates,
+                                                onSelect: {template in vm.selectedTemplate(template)})
                         }
                     }
                     
                     if vm.currentStep == 3 {
-//                        Step3ReviewAndCreateSessionView()
-//                            .transition(.move(edge: .trailing).combined(with: .opacity))
+                        if let selected = vm.selectedTemplate {
+                            Step3ReviewAndCreateSessionView(workoutTemplate: selected,
+                                                            editedExercises: $vm.editedExercises)
+                                .transition(.move(edge: .trailing).combined(with: .opacity))
+                        } else {
+                            Text("No template selected")
+                                .foregroundStyle(.secondary)
+                        }
                     }
+
                 }
                 .animation(.easeInOut, value: vm.currentStep)
                 
-                
-                
-                
-                // NAV BUTTONS
                 HStack {
                     if vm.currentStep > 1 {
-                        Button("Back") {
+                        Button {
                             vm.currentStep -= 1
+                        } label: {
+                            Text("Back").foregroundStyle(.secondary)
                         }
-                        .padding()
                     }
                     
                     Spacer()
                     
-                    if vm.currentStep < vm.totalSteps {
+                    if vm.currentStep == vm.totalSteps {
                         Button("Next") {
-                            vm.currentStep += 1
+                            vm.createFromTemplate()
                         }
-                        .padding()
                     }
-                }
+                }.padding(0)
             }
             .padding(20)
             .background(Color.black.ignoresSafeArea())
             .foregroundColor(.white)
+
         }
     }
 }
 
 #Preview {
-    PreWorkoutView(
-        vm: CreateWorkoutSessionViewModel(
-            createWorkoutSessionFromTemplate:
-                CreateWorkoutSessionFromTemplate(workoutSessionRepository: MockUpWorkoutRepository(), workoutTemplateRepository: MockupWorkoutTemplateRepository()),
-            createWorkoutSessionNotFromTemplate:
-                CreateWorkoutSessionNotFromTemplate(workoutSessionRepository: MockUpWorkoutRepository(), workoutTemplateRepository: MockupWorkoutTemplateRepository()),
-            getAllWorkoutTemplate:
-                GetAllWorkoutTemplate(repository: MockupWorkoutTemplateRepository()))
+    let sessionRepo = MockUpWorkoutRepository()
+    let templateRepo = MockupWorkoutTemplateRepository()
+
+    let createVM = CreateWorkoutSessionViewModel(
+        createWorkoutSessionFromTemplate: CreateWorkoutSessionFromTemplate(
+            workoutSessionRepository: sessionRepo,
+            workoutTemplateRepository: templateRepo
+        ),
+        createWorkoutSessionNotFromTemplate: CreateWorkoutSessionNotFromTemplate(
+            workoutSessionRepository: sessionRepo,
+            workoutTemplateRepository: templateRepo
+        ),
+        getAllWorkoutTemplate: GetAllWorkoutTemplate(repository: templateRepo)
+    )
+
+    return PreWorkoutView(
+        vm: createVM,
+        makeTrackingVM: { sessionID in
+            WorkoutTrackingViewModel(
+                sessionId: sessionID,
+                getWorkoutSessionById: GetWorkoutSessionById(repository: sessionRepo)
+            )
+        }
     )
 }

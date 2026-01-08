@@ -74,7 +74,7 @@ struct Step1PreStartWorkout: View {
                                 .foregroundColor(.white)
                                 .frame(maxHeight: .infinity)
                             VStack(alignment:.leading, spacing: 10){
-                                Text("Recommend Workout")
+                                Text("Start your workout")
                                     .font(.system(size: 20, weight: .semibold))
                                 Text("Choose your workout based on your fitness level and goals")
                                     .multilineTextAlignment(.leading)

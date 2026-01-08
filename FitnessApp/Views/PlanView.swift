@@ -42,14 +42,14 @@ struct PlanView: View {
                 .cornerRadius(20)
                 
                 
-                VStack(alignment:.leading){
+                VStack(alignment:.leading, spacing: 20){
                     HStack{
                         Text("Planned Workout")
                             .font(.system(size: 20, weight: .semibold))
                         Spacer()
                     }
-                    VStack(spacing:20){
-                        HStack(spacing: 20) {
+                    VStack(spacing: 10){
+                        HStack(spacing: 10) {
                             PlannedWorkoutCard(
                                 title: "Push Day",
                                 accentColor: .orange,
@@ -75,7 +75,7 @@ struct PlanView: View {
                             ).aspectRatio(1, contentMode: .fit)
                             
                         }
-                        HStack(spacing: 20) {
+                        HStack(spacing: 10) {
                             PlannedWorkoutCard(
                                 title: "Push Day",
                                 accentColor: .orange,

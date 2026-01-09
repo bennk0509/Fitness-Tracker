@@ -32,7 +32,7 @@ let sampleWorkouts: [Workout] = [
         intensity: "Intense"
     ),
     Workout(
-        name: "Yoga Flow",
+        name: "Yoga Flow with Khanh Anh Kiet Nguyen",
         duration: 20,
         calories: 90,
         date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!,

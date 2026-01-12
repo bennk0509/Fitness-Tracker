@@ -301,11 +301,16 @@ struct WorkoutTrackingView: View {
 }
 
 #Preview {
-    var sampleTrackingSession = sampleWorkouts[0]
-    WorkoutTrackingView(sessionId: sampleTrackingSession.id,
-                        makeVM: {id in
-        WorkoutTrackingViewModel(sessionId: id,
-                                 getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository()),
-                                 getAllExerciseTemplate: GetAllExerciseTemplate(repository: MockupExerciseTemplateRepository()))
-    })
+    let useCases = WorkoutTrackingUseCases(
+        getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository()),
+        getAllExerciseTemplate: GetAllExerciseTemplate(repository: MockupExerciseTemplateRepository() ),
+        addSetToExercise: AddSetToExercise(workoutSessionRepository: MockUpWorkoutRepository()),
+        deleteSetFromExercise: DeleteSetFromExercise(workoutSessionRepository: MockUpWorkoutRepository()),
+        updateSetWeight: UpdateSetWeight(repo: MockUpWorkoutRepository()),
+        updateSetReps: UpdateSetReps(repo: MockUpWorkoutRepository()),
+        addExerciseFromTemplate: AddExerciseFromTemplate(repo: MockUpWorkoutRepository()),
+        deleteExerciseFromSession: DeleteExerciseFromSession(repo: MockUpWorkoutRepository()),
+        finishWorkoutSession: FinishWorkoutSession(repo: MockUpWorkoutRepository())
+    )
+//    WorkoutTrackingViewModel(sessionId: id, useCases: useCases)
 }

@@ -32,6 +32,11 @@ struct FitnessTabView: View {
                             Label("Plan", systemImage: "calendar")
                         }
                     
+                    Text("Start Workout")
+                        .tabItem {
+                            Label("Start", systemImage: "person.crop.circle")
+                    }
+                    
                     Text("Account")
                         .tabItem {
                             Label("Account", systemImage: "person.crop.circle")
@@ -47,7 +52,9 @@ struct FitnessTabView: View {
                         makeTrackingVM: { sessionID in
                                 WorkoutTrackingViewModel(
                                     sessionId: sessionID,
-                                    getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository())
+                                    getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository()),
+                                    getAllExerciseTemplate:
+                                        GetAllExerciseTemplate(repository: MockupExerciseTemplateRepository())
                                 )
                             }
                     )

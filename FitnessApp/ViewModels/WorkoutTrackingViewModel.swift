@@ -11,6 +11,7 @@ import SwiftUI
 class WorkoutTrackingViewModel{
     let sessionId: UUID
     private let getWorkoutSessionById: GetWorkoutSessionById
+    private let getAllExerciseTemplate: GetAllExerciseTemplate
     
     var session: WorkoutSession?
     var isLoading = false
@@ -25,12 +26,66 @@ class WorkoutTrackingViewModel{
     
     var restRequest: RestRequest? = nil
 
+    struct ExercisesLibSheet: Identifiable { let id = UUID() }
+
+    var showExercisesLib: ExercisesLibSheet? = nil
+
+    var exerciseTemplates: [ExerciseTemplate] = []
     
     
+    var elapsedSeconds: Int = 0
+    private var timerTask: Task<Void, Never>? = nil
+    private var startDate: Date? = nil
     
-    init(sessionId: UUID, getWorkoutSessionById: GetWorkoutSessionById) {
+    var isPaused = false
+    var confirmFinish = false
+
+    func togglePause() {
+        isPaused.toggle()
+        if isPaused { stopWorkoutTimer() }
+        else { startWorkoutTimer() } // hoặc startWorkoutTimer() kiểu resume
+    }
+
+    func startWorkoutTimer() {
+        // tránh start nhiều lần
+        if timerTask != nil { return }
+
+        startDate = Date()
+        elapsedSeconds = 0
+
+        timerTask = Task { [weak self] in
+            guard let self else { return }
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 1_000_000_000) // 1s
+                guard let start = self.startDate else { continue }
+                self.elapsedSeconds = Int(Date().timeIntervalSince(start))
+            }
+        }
+    }
+
+    func stopWorkoutTimer() {
+        timerTask?.cancel()
+        timerTask = nil
+    }
+
+    var elapsedText: String {
+        let m = elapsedSeconds / 60
+        let s = elapsedSeconds % 60
+        return String(format: "%02d:%02d", m, s)
+    }
+
+    
+    func loadExerciseTemplate(){
+        if !exerciseTemplates.isEmpty {
+            return
+        }
+        exerciseTemplates = getAllExerciseTemplate.execute()
+    }
+    
+    init(sessionId: UUID, getWorkoutSessionById: GetWorkoutSessionById, getAllExerciseTemplate: GetAllExerciseTemplate) {
         self.sessionId = sessionId
         self.getWorkoutSessionById = getWorkoutSessionById
+        self.getAllExerciseTemplate = getAllExerciseTemplate
     }
     
     func load() {
@@ -38,8 +93,10 @@ class WorkoutTrackingViewModel{
         errorMessage = nil
         defer { isLoading = false }
         session = getWorkoutSessionById.execute(id: sessionId)
+        startWorkoutTimer()
     }
 
+    
     
     func addSet(exerciseID: UUID)
     {
@@ -93,7 +150,15 @@ class WorkoutTrackingViewModel{
         restRequest = nil
     }
     
-    func addExercise(){
-        
+    func addExercise(from template: ExerciseTemplate) {
+        guard var s = session else { return }
+        var new_exercise = template.toExercise()
+        s.exercises.append(new_exercise)
+        session = s
+    }
+    
+    func clickAddNewExercise(){
+        showExercisesLib = ExercisesLibSheet()
+        loadExerciseTemplate()
     }
 }

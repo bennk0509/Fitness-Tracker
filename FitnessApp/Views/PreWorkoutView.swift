@@ -24,10 +24,9 @@ struct PreWorkoutView: View {
            WorkoutTrackingView(sessionId: sessionID, makeVM: makeTrackingVM)
         } else{
             VStack(spacing:30) {
-            
-                // STEP PROGRESS BAR
-                StepProgressBar(step: vm.currentStep, total: vm.totalSteps)
-                
+//                // STEP PROGRESS BAR
+//                StepProgressBar(step: vm.currentStep, total: vm.totalSteps)
+//                
                 // STEP CONTENT
                 Group {
                     if vm.currentStep == 1 {
@@ -87,6 +86,7 @@ struct PreWorkoutView: View {
 #Preview {
     let sessionRepo = MockUpWorkoutRepository()
     let templateRepo = MockupWorkoutTemplateRepository()
+    let exerciseRepo = MockupExerciseTemplateRepository()
 
     let createVM = CreateWorkoutSessionViewModel(
         createWorkoutSessionFromTemplate: CreateWorkoutSessionFromTemplate(
@@ -100,12 +100,13 @@ struct PreWorkoutView: View {
         getAllWorkoutTemplate: GetAllWorkoutTemplate(repository: templateRepo)
     )
 
-    return PreWorkoutView(
+    PreWorkoutView(
         vm: createVM,
         makeTrackingVM: { sessionID in
             WorkoutTrackingViewModel(
                 sessionId: sessionID,
-                getWorkoutSessionById: GetWorkoutSessionById(repository: sessionRepo)
+                getWorkoutSessionById: GetWorkoutSessionById(repository: sessionRepo),
+                getAllExerciseTemplate: GetAllExerciseTemplate(repository: exerciseRepo)
             )
         }
     )

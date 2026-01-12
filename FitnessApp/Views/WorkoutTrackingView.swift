@@ -33,6 +33,31 @@ struct WorkoutTrackingView: View {
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
+                    HStack(spacing: 10) {
+                    // Pause / Resume
+                    Button {
+                        vm.togglePause()
+                    } label: {
+                        Image(systemName: vm.isPaused ? "play.fill" : "pause.fill")
+                            .font(.headline)
+                            .frame(width: 40, height: 40)
+                            .background(Color.white.opacity(0.10))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+
+                    // Finish
+                    Button {
+                        vm.confirmFinish = true
+                    } label: {
+                        Text("Finish")
+                            .font(.subheadline.bold())
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(Color.orange)
+                            .foregroundStyle(.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                }
                 }
                 VStack(spacing: 10) {
                     Divider()
@@ -41,7 +66,7 @@ struct WorkoutTrackingView: View {
                     HStack(spacing: 0) {
                         
                         VStack(spacing: 4) {
-                            Text("00:00")
+                            Text(vm.elapsedText)
                                 .font(.title3.weight(.semibold))
                             Text("Est Duration")
                                 .font(.caption)
@@ -194,7 +219,7 @@ struct WorkoutTrackingView: View {
                 }
 
                 Button {
-                    
+                    vm.clickAddNewExercise()
                 } label: {
                     Label("Add New Exercise", systemImage: "plus.circle.fill")
                         .font(.headline)
@@ -222,14 +247,22 @@ struct WorkoutTrackingView: View {
             .presentationDetents([.height(350)])
             .presentationDragIndicator(.visible)
         }
-        .onAppear{
-            vm.fetchDataWith(id)
-        }
         .sheet(item: $vm.restRequest) { req in
             RestCountdownView(totalSeconds: req.seconds) {
                 vm.clearRest()
             }.presentationDetents([.height(350)])
                 .presentationDragIndicator(.visible)
+        }
+        .sheet(item: $vm.showExercisesLib)
+        {_ in 
+            ShowExerciseTemplate(
+                    exercises: vm.exerciseTemplates,
+                    onSelect: { template in
+                        vm.addExercise(from: template)
+                        vm.showExercisesLib = nil
+                    }
+            )
+            .presentationDragIndicator(.visible)
         }
         
         .foregroundColor(.white)
@@ -239,9 +272,10 @@ struct WorkoutTrackingView: View {
 
 #Preview {
     var sampleTrackingSession = sampleWorkouts[0]
-    return WorkoutTrackingView(sessionId: sampleTrackingSession.id,
-                            makeVM: {id in
-        WorkoutTrackingViewModel(sessionId: id, getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository()))
-                                })
-    
+    WorkoutTrackingView(sessionId: sampleTrackingSession.id,
+                        makeVM: {id in
+        WorkoutTrackingViewModel(sessionId: id,
+                                 getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository()),
+                                 getAllExerciseTemplate: GetAllExerciseTemplate(repository: MockupExerciseTemplateRepository()))
+    })
 }

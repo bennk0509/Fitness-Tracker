@@ -6,15 +6,18 @@
 //
 
 import SwiftUI
+import SwiftUI
 
 @Observable
 final class AppContainer {
 
+    // Repos
     let workoutSessionRepo: WorkoutSessionRepository
     let workoutTemplateRepo: WorkoutTemplateRepository
     let exerciseTemplateRepo: ExerciseTemplateRepository
     let activityRepo: ActivityRepository
 
+    // Shared usecases (home/create...)
     let getAllWorkouts: GetAllWorkouts
     let getDailyActivity: GetDailyActivity
     let getAllWorkoutTemplate: GetAllWorkoutTemplate
@@ -22,6 +25,7 @@ final class AppContainer {
     let getAllExerciseTemplate: GetAllExerciseTemplate
     let createWorkoutSessionFromTemplate: CreateWorkoutSessionFromTemplate
     let createWorkoutSessionNotFromTemplate: CreateWorkoutSessionNotFromTemplate
+    let trackingUseCases: WorkoutTrackingUseCases
 
     init(
         workoutSessionRepo: WorkoutSessionRepository,
@@ -34,6 +38,7 @@ final class AppContainer {
         self.exerciseTemplateRepo = exerciseTemplateRepo
         self.activityRepo = activityRepo
 
+        // Base usecases
         self.getAllWorkouts = GetAllWorkouts(repository: workoutSessionRepo)
         self.getDailyActivity = GetDailyActivity(repository: activityRepo)
         self.getAllWorkoutTemplate = GetAllWorkoutTemplate(repository: workoutTemplateRepo)
@@ -47,6 +52,18 @@ final class AppContainer {
         self.createWorkoutSessionNotFromTemplate = CreateWorkoutSessionNotFromTemplate(
             workoutSessionRepository: workoutSessionRepo,
             workoutTemplateRepository: workoutTemplateRepo
+        )
+
+        self.trackingUseCases = WorkoutTrackingUseCases(
+            getWorkoutSessionById: self.getWorkoutSessionById,
+            getAllExerciseTemplate: self.getAllExerciseTemplate,
+            addSetToExercise: AddSetToExercise(workoutSessionRepository: workoutSessionRepo),
+            deleteSetFromExercise: DeleteSetFromExercise(workoutSessionRepository: workoutSessionRepo),
+            updateSetWeight: UpdateSetWeight(repo: workoutSessionRepo),
+            updateSetReps: UpdateSetReps(repo: workoutSessionRepo),
+            addExerciseFromTemplate: AddExerciseFromTemplate(repo: workoutSessionRepo),
+            deleteExerciseFromSession: DeleteExerciseFromSession(repo: workoutSessionRepo),
+            finishWorkoutSession: FinishWorkoutSession(repo: workoutSessionRepo)
         )
     }
 
@@ -63,10 +80,6 @@ final class AppContainer {
     }
 
     func makeTrackingVM(sessionId: UUID) -> WorkoutTrackingViewModel {
-        WorkoutTrackingViewModel(
-            sessionId: sessionId,
-            getWorkoutSessionById: getWorkoutSessionById,
-            getAllExerciseTemplate: getAllExerciseTemplate
-        )
+        WorkoutTrackingViewModel(sessionId: sessionId, useCases: trackingUseCases)
     }
 }

@@ -95,14 +95,24 @@ struct PreWorkoutView: View {
         ),
         getAllWorkoutTemplate: GetAllWorkoutTemplate(repository: templateRepo)
     )
+    
+    let useCases = WorkoutTrackingUseCases(
+        getWorkoutSessionById: GetWorkoutSessionById(repository: sessionRepo),
+        getAllExerciseTemplate: GetAllExerciseTemplate(repository: exerciseRepo),
+        addSetToExercise: AddSetToExercise(workoutSessionRepository: sessionRepo),
+        deleteSetFromExercise: DeleteSetFromExercise(workoutSessionRepository: sessionRepo),
+        updateSetWeight: UpdateSetWeight(repo: sessionRepo),
+        updateSetReps: UpdateSetReps(repo: sessionRepo),
+        addExerciseFromTemplate: AddExerciseFromTemplate(repo: sessionRepo),
+        deleteExerciseFromSession: DeleteExerciseFromSession(repo: sessionRepo),
+        finishWorkoutSession: FinishWorkoutSession(repo: sessionRepo)
+    )
 
     PreWorkoutView(
         vm: createVM,
         makeTrackingVM: { sessionID in
             WorkoutTrackingViewModel(
-                sessionId: sessionID,
-                getWorkoutSessionById: GetWorkoutSessionById(repository: sessionRepo),
-                getAllExerciseTemplate: GetAllExerciseTemplate(repository: exerciseRepo)
+                sessionId: sessionID, useCases: useCases,
             )
         }
     )

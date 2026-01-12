@@ -47,7 +47,7 @@ struct WorkoutTrackingView: View {
 
                     // Finish
                     Button {
-                        vm.confirmFinish = true
+                        vm.finishWorkout()
                     } label: {
                         Text("Finish")
                             .font(.subheadline.bold())
@@ -313,4 +313,9 @@ struct WorkoutTrackingView: View {
         finishWorkoutSession: FinishWorkoutSession(repo: MockUpWorkoutRepository())
     )
 //    WorkoutTrackingViewModel(sessionId: id, useCases: useCases)
+    var sampleTrackingSession = sampleWorkouts[0]
+    WorkoutTrackingView(sessionId: sampleTrackingSession.id,
+                        makeVM: {id in
+        WorkoutTrackingViewModel(sessionId: id, useCases: useCases)
+    })
 }

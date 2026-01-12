@@ -24,11 +24,6 @@ struct PreWorkoutView: View {
            WorkoutTrackingView(sessionId: sessionID, makeVM: makeTrackingVM)
         } else{
             VStack(spacing:30) {
-            
-                // STEP PROGRESS BAR
-                StepProgressBar(step: vm.currentStep, total: vm.totalSteps)
-                
-                // STEP CONTENT
                 Group {
                     if vm.currentStep == 1 {
                         Step1PreStartWorkout(currentStep: $vm.currentStep, isTemplate: $vm.isTemplate)
@@ -87,6 +82,7 @@ struct PreWorkoutView: View {
 #Preview {
     let sessionRepo = MockUpWorkoutRepository()
     let templateRepo = MockupWorkoutTemplateRepository()
+    let exerciseRepo = MockupExerciseTemplateRepository()
 
     let createVM = CreateWorkoutSessionViewModel(
         createWorkoutSessionFromTemplate: CreateWorkoutSessionFromTemplate(
@@ -99,13 +95,24 @@ struct PreWorkoutView: View {
         ),
         getAllWorkoutTemplate: GetAllWorkoutTemplate(repository: templateRepo)
     )
+    
+    let useCases = WorkoutTrackingUseCases(
+        getWorkoutSessionById: GetWorkoutSessionById(repository: sessionRepo),
+        getAllExerciseTemplate: GetAllExerciseTemplate(repository: exerciseRepo),
+        addSetToExercise: AddSetToExercise(workoutSessionRepository: sessionRepo),
+        deleteSetFromExercise: DeleteSetFromExercise(workoutSessionRepository: sessionRepo),
+        updateSetWeight: UpdateSetWeight(repo: sessionRepo),
+        updateSetReps: UpdateSetReps(repo: sessionRepo),
+        addExerciseFromTemplate: AddExerciseFromTemplate(repo: sessionRepo),
+        deleteExerciseFromSession: DeleteExerciseFromSession(repo: sessionRepo),
+        finishWorkoutSession: FinishWorkoutSession(repo: sessionRepo)
+    )
 
-    return PreWorkoutView(
+    PreWorkoutView(
         vm: createVM,
         makeTrackingVM: { sessionID in
             WorkoutTrackingViewModel(
-                sessionId: sessionID,
-                getWorkoutSessionById: GetWorkoutSessionById(repository: sessionRepo)
+                sessionId: sessionID, useCases: useCases,
             )
         }
     )

@@ -33,14 +33,6 @@ struct RestCountdownView: View {
                 Text("Rest timer")
                     .font(.title.bold())
                 Spacer()
-
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.secondary)
-                        .padding(8)
-                }
             }
 
             // Countdown display

@@ -46,7 +46,6 @@ class HomeViewModel{
         fetchInitialData()
     }
     
-    // VIEWMODEL thì có fetch data không ạ?
     private func fetchInitialData(){
         workouts = getAllWorkouts.execute()
         dailyActivity = getDailyActivity.execute()

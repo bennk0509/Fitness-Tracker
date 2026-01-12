@@ -12,10 +12,17 @@ import CoreData
 struct FitnessAppApp: App {
     let persistenceController = PersistenceController.shared
 
+    @State private var container = AppContainer(
+        workoutSessionRepo: MockUpWorkoutRepository(),
+        workoutTemplateRepo: MockupWorkoutTemplateRepository(),
+        exerciseTemplateRepo: MockupExerciseTemplateRepository(),
+        activityRepo: MockupActivityRepository()
+    )
 
     var body: some Scene {
         WindowGroup {
             FitnessTabView()
+                .environment(container)
                 .whiteText()
         }
     }

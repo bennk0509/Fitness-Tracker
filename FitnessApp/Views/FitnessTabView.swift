@@ -8,74 +8,49 @@
 import SwiftUI
 
 
-struct FitnessTabView: View {
+import SwiftUI
 
-    @State private var goToAddSession = false
+struct FitnessTabView: View {
+    @Environment(AppContainer.self) private var container
 
     var body: some View {
+        TabView {
 
-        NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                Color.black
-                    .ignoresSafeArea()
-                
-                TabView {
-                    HomeView(
-                        vm: HomeViewModel(getAllWorkouts: GetAllWorkouts(repository: MockUpWorkoutRepository()), getDailyActivity: GetDailyActivity(repository: MockupActivityRepository()))
-                    )
-                        .tabItem {
-                            Label("Home", systemImage: "house.fill")
-                        }
-                    
-                    PlanView()
-                        .tabItem {
-                            Label("Plan", systemImage: "calendar")
-                        }
-                    
-                    Text("Account")
-                        .tabItem {
-                            Label("Account", systemImage: "person.crop.circle")
-                        }
-                    PreWorkoutView(
-                        vm: CreateWorkoutSessionViewModel(
-                            createWorkoutSessionFromTemplate:
-                                CreateWorkoutSessionFromTemplate(workoutSessionRepository: MockUpWorkoutRepository(), workoutTemplateRepository: MockupWorkoutTemplateRepository()),
-                            createWorkoutSessionNotFromTemplate:
-                                CreateWorkoutSessionNotFromTemplate(workoutSessionRepository: MockUpWorkoutRepository(), workoutTemplateRepository: MockupWorkoutTemplateRepository()),
-                            getAllWorkoutTemplate:
-                                GetAllWorkoutTemplate(repository: MockupWorkoutTemplateRepository())),
-                        makeTrackingVM: { sessionID in
-                                WorkoutTrackingViewModel(
-                                    sessionId: sessionID,
-                                    getWorkoutSessionById: GetWorkoutSessionById(repository: MockUpWorkoutRepository())
-                                )
-                            }
-                    )
-                    .tabItem {
-                        Label("Analysis", systemImage: "chart.bar.xaxis")
-                    }
-                }
-
-                Button {
-
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 60, height: 60)
-                        .background(Color.blue)
-                        .clipShape(Circle())
-                }
-                .padding(.trailing, 20)
-                .padding(.bottom, 60)
+            NavigationStack {
+                HomeView(vm: container.makeHomeVM())
             }
-        }
+            .tabItem { Label("Home", systemImage: "house.fill") }
 
+            NavigationStack { PlanView() }
+                .tabItem { Label("Plan", systemImage: "calendar") }
+
+            NavigationStack {
+                PreWorkoutView(
+                    vm: container.makeCreateSessionVM(),
+                    makeTrackingVM: { id in container.makeTrackingVM(sessionId: id) }
+                )
+            }
+            .tabItem { Label("Start", systemImage: "play.circle.fill") }
+
+            NavigationStack { Text("Account") }
+                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+
+            NavigationStack { Text("ABSC") }
+                .tabItem { Label("Analysis", systemImage: "chart.bar.xaxis") }
+        }
+        .background(Color.black.ignoresSafeArea())
     }
 }
 
-
-
 #Preview {
+    // Preview cần inject container
     FitnessTabView()
+        .environment(
+            AppContainer(
+                workoutSessionRepo: MockUpWorkoutRepository(),
+                workoutTemplateRepo: MockupWorkoutTemplateRepository(),
+                exerciseTemplateRepo: MockupExerciseTemplateRepository(),
+                activityRepo: MockupActivityRepository()
+            )
+        )
 }

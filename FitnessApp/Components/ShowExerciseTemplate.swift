@@ -1,24 +1,12 @@
-//
-//  ShowExerciseTemplate.swift
-//  FitnessApp
-//
-//  Created by Khanh Anh Kiet Nguyen on 2026-01-07.
-//
-
-
 import SwiftUI
 
 struct ShowExerciseTemplate: View {
-    @State private var searchText: String = ""
-    @Binding var currentStep: Int
 
     let exercises: [ExerciseTemplate]
     let onSelect: (ExerciseTemplate) -> Void
 
-    // expand per exercise
-    @State private var expanded: [UUID: Bool] = [:]
-
-    // filter by search
+    @State private var searchText: String = ""
+    
     private var filtered: [ExerciseTemplate] {
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if q.isEmpty { return exercises }
@@ -68,32 +56,22 @@ struct ShowExerciseTemplate: View {
                         Button {
                             onSelect(ex)
                         } label: {
-                            VStack(spacing: 10) {
-
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(ex.name)
-                                            .font(.system(size: 18, weight: .semibold))
-                                    }
-
-                                    Spacer()
-                                }
+                            HStack {
+                                Text(ex.name)
+                                    .font(.system(size: 18, weight: .semibold))
+                                Spacer()
                             }
                             .padding()
-                            .background(Color.white.opacity(0.05))
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                            .onAppear {
-                                if expanded[ex.id] == nil {
-                                    expanded[ex.id] = false
-                                }
-                            }
                         }
                         .buttonStyle(.plain)
                     }
                 }
             }
-
         }
+        .foregroundStyle(.black)
+        .padding()
+        .padding(.top, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -102,7 +80,6 @@ struct ShowExerciseTemplate: View {
     ZStack {
         Color.black.ignoresSafeArea()
         ShowExerciseTemplate(
-            currentStep: .constant(2),
             exercises: sampleExerciseTemplates,
             onSelect: { _ in }
         )

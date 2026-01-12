@@ -1,0 +1,56 @@
+//
+//  .gitignore
+//  FitnessApp
+//
+//  Created by Khanh Anh Kiet Nguyen on 2026-01-12.
+//
+
+# ================================
+# Xcode user-specific files
+# ================================
+*.xcuserdata
+**/xcuserdata/
+**/xcdebugger/
+**/Breakpoints_v2.xcbkptlist
+*.xcbkptlist
+*.xcscheme
+
+# ================================
+# Build products
+# ================================
+DerivedData/
+build/
+
+# ================================
+# macOS system files
+# ================================
+.DS_Store
+
+# ================================
+# Swift / Obj-C artifacts
+# ================================
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# ================================
+# Playgrounds
+# ================================
+timeline.xctimeline
+playground.xcworkspace
+
+# ================================
+# Swift Package Manager
+# ================================
+.build/
+
+# ================================
+# Carthage
+# ================================
+Carthage/Checkouts
+
+# ================================
+# CocoaPods
+# ================================
+# Pods/

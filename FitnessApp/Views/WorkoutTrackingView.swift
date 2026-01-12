@@ -116,23 +116,25 @@ struct WorkoutTrackingView: View {
                                         .font(.headline)
                                     Spacer()
                                     Button {
-                                        print("Details")
+                                        vm.openExerciseDetail(exerciseId: ex.id)
                                     } label: {
-                                        Image(systemName: "info.circle")
+                                        Image(systemName: "ellipsis.circle")
                                             .foregroundStyle(.secondary)
                                     }
                                 }
                                 
                                 Button {
+                                    vm.editingRestExerciseId = ex.id
                                     vm.showRestPicker = true
                                 } label: {
-                                    Text(vm.restMinutes == 0 ? "Rest Off" : "Rest \(vm.restMinutes)s")
+                                    let rest = vm.restSeconds(for: ex.id)
+                                    Text(rest == 0 ? "Rest Off" : "Rest \(rest)s")
                                         .font(.caption.bold())
                                         .padding(.horizontal, 14)
                                         .padding(.vertical, 6)
                                         .background(
                                             RoundedRectangle(cornerRadius: 8)
-                                                .fill(vm.restMinutes == 0 ? Color.white.opacity(0.10) : Color.orange.opacity(0.35))
+                                                .fill(rest == 0 ? Color.white.opacity(0.10) : Color.orange.opacity(0.35))
                                         )
                                 }
                                 
@@ -157,45 +159,54 @@ struct WorkoutTrackingView: View {
                                         .frame(width: 36, alignment: .leading)
                                 }
 
-                                VStack(spacing: 15){
+                                VStack {
                                     ForEach(ex.sets) { set in
-                                        HStack(spacing: 10) {
-                                            Text("\(set.setNumber)")
-                                                .font(.subheadline.weight(.semibold))
-                                                .frame(width: 28, height: 28)
-                                                .background(
-                                                    RoundedRectangle(cornerRadius: 8)
-                                                        .fill(Color.white.opacity(0.10))
-                                                )
-                                                .frame(width: 40, alignment: .leading)
-
-                                            Text("\(set.weight, format: .number.precision(.fractionLength(2)))")
-                                                .font(.subheadline.weight(.semibold))
-                                                .frame(maxWidth: .infinity, minHeight: 28)
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 8)
-                                                        .stroke(Color.white.opacity(0.2), lineWidth: 1.5)
-                                                )
-
-                                            Text("\(set.reps)")
-                                                .font(.subheadline.weight(.semibold))
-                                                .frame(maxWidth: .infinity, minHeight: 28)
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 8)
-                                                        .stroke(Color.white.opacity(0.2), lineWidth: 1.5)
-                                                )
-                                            Button{
-                                                vm.finishSet(exerciseId: ex.id, setId: set.id)
-                                            } label: {
-                                                Image(systemName: "checkmark.square")
-    //                                            Image(systemName: "trash.fill")
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .font(.caption)
-                                                    .foregroundStyle(.secondary)
-                                                    .frame(width: 36, height: 20, alignment: .center)
+                                        SwipeToDelete(onDelete: {
+                                                vm.deleteSet(exerciseId: ex.id, setId: set.id)
+                                        }){
+                                            HStack(spacing: 10) {
+                                                Text("\(set.setNumber)")
+                                                    .font(.subheadline.weight(.semibold))
+                                                    .frame(width: 28, height: 28)
+                                                    .background(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .fill(Color.white.opacity(0.10))
+                                                    )
+                                                    .frame(width: 40, alignment: .leading)
+                                                
+                                                Text("\(set.weight, format: .number.precision(.fractionLength(2)))")
+                                                    .font(.subheadline.weight(.semibold))
+                                                    .frame(maxWidth: .infinity, minHeight: 28)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(Color.white.opacity(0.2), lineWidth: 1.5)
+                                                    )
+                                                
+                                                Text("\(set.reps)")
+                                                    .font(.subheadline.weight(.semibold))
+                                                    .frame(maxWidth: .infinity, minHeight: 28)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(Color.white.opacity(0.2), lineWidth: 1.5)
+                                                    )
+                                                Button{
+                                                    vm.finishSet(exerciseId: ex.id, setId: set.id)
+                                                } label: {
+                                                    Image(systemName: "checkmark.square")
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fit)
+                                                        .font(.caption)
+                                                        .foregroundStyle(.secondary)
+                                                        .frame(width: 36, height: 20, alignment: .center)
+                                                }
+                                                
+                                            }.swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                                Button(role: .destructive) {
+                                                    vm.deleteSet(exerciseId: ex.id, setId: set.id)
+                                                } label: {
+                                                    Label("Delete", systemImage: "trash")
+                                                }
                                             }
-                                            
                                         }
                                     }
                                 }
@@ -237,21 +248,30 @@ struct WorkoutTrackingView: View {
             }
 
         }.sheet(isPresented: $vm.showRestPicker) {
-            RestTimerView(isShown: $vm.showRestPicker, minutes: $vm.restMinutes) { newMinutes in
-//                if newMinutes == 0 {
-//                    vm.stopRest()
-//                } else {
-//                    vm.startRest(seconds: newMinutes * 60)
-//                }
-            }
+            let exId = vm.editingRestExerciseId
+
+            RestTimerView(
+                isShown: $vm.showRestPicker,
+                minutes: Binding(
+                    get: { exId.map { vm.restSeconds(for: $0) } ?? 0 },
+                    set: { newValue in
+                        guard let exId else { return }
+                        vm.setRestSeconds(newValue, for: exId)
+                    }
+                )
+            ) { _ in }
             .presentationDetents([.height(350)])
             .presentationDragIndicator(.visible)
+            .onDisappear {
+                vm.editingRestExerciseId = nil
+            }
         }
         .sheet(item: $vm.restRequest) { req in
             RestCountdownView(totalSeconds: req.seconds) {
                 vm.clearRest()
             }.presentationDetents([.height(350)])
                 .presentationDragIndicator(.visible)
+                .interactiveDismissDisabled(true)
         }
         .sheet(item: $vm.showExercisesLib)
         {_ in 
@@ -264,7 +284,17 @@ struct WorkoutTrackingView: View {
             )
             .presentationDragIndicator(.visible)
         }
-        
+        .sheet(item: $vm.exerciseDetailSheet) { sheet in
+            ExerciseDetailSheetView(
+                exerciseName: vm.session?.exercises.first(where: { $0.id == sheet.exerciseId })?.name ?? "Exercise",
+                onDelete: {
+                    vm.deleteExercise(exerciseId: sheet.exerciseId)
+                    vm.closeExerciseDetail()
+                }
+            )
+            .presentationDetents([.height(100)])
+            .presentationDragIndicator(.visible)
+        }
         .foregroundColor(.white)
     }
 

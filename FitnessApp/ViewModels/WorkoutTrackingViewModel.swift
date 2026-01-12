@@ -22,7 +22,8 @@ class WorkoutTrackingViewModel{
     }
     
     var showRestPicker = false
-    var restMinutes = 0
+    var restByExercise: [UUID: Int] = [:]
+    var editingRestExerciseId: UUID? = nil
     
     var restRequest: RestRequest? = nil
 
@@ -40,6 +41,14 @@ class WorkoutTrackingViewModel{
     var isPaused = false
     var confirmFinish = false
 
+    func restSeconds(for exerciseId: UUID) -> Int {
+        restByExercise[exerciseId] ?? 0
+    }
+
+    func setRestSeconds(_ seconds: Int, for exerciseId: UUID) {
+        restByExercise[exerciseId] = max(0, seconds)
+    }
+    
     func togglePause() {
         isPaused.toggle()
         if isPaused { stopWorkoutTimer() }
@@ -138,21 +147,19 @@ class WorkoutTrackingViewModel{
         session = s
     }
     
-    func finishSet(exerciseId: UUID, setId: UUID)
-    {
-        
-        let seconds = restMinutes
-        guard seconds > 0 else {return}
+    func finishSet(exerciseId: UUID, setId: UUID) {
+        let seconds = restSeconds(for: exerciseId)
+        guard seconds > 0 else { return }
         restRequest = RestRequest(seconds: seconds, exerciseId: exerciseId, setId: setId)
     }
-    
+
     func clearRest(){
         restRequest = nil
     }
     
     func addExercise(from template: ExerciseTemplate) {
         guard var s = session else { return }
-        var new_exercise = template.toExercise()
+        let new_exercise = template.toExercise()
         s.exercises.append(new_exercise)
         session = s
     }
@@ -161,4 +168,56 @@ class WorkoutTrackingViewModel{
         showExercisesLib = ExercisesLibSheet()
         loadExerciseTemplate()
     }
+    
+    
+    func finishWorkout(){
+        stopWorkoutTimer()
+        clearRest()
+        
+        guard var s = session else { return }
+        
+//        s.endedAt = Date()
+//        s.durationSeconds = elapsedSeconds
+//        s.status = .completed
+//        
+    
+//        name: String,
+//        duration: Int = 0,
+//        calories: Int = 0,
+//        date: Date = Date(),
+//        intensity: String? = nil,
+//        exercises: [Exercise] = [],
+//        templateID: UUID? = nil)
+//        session = s
+
+        // TODO: gọi usecase để lưu DB
+        // finishWorkoutSession.execute(session: s)
+
+        // TODO: navigate / show summary
+        // showSummary = s
+    }
+    
+    
+    struct ExerciseDetailSheet: Identifiable {
+            let exerciseId: UUID
+            var id: UUID { exerciseId }   // stable id
+        }
+
+        var exerciseDetailSheet: ExerciseDetailSheet? = nil
+
+        func openExerciseDetail(exerciseId: UUID) {
+            exerciseDetailSheet = ExerciseDetailSheet(exerciseId: exerciseId)
+        }
+
+        func closeExerciseDetail() {
+            exerciseDetailSheet = nil
+        }
+
+        func deleteExercise(exerciseId: UUID) {
+            guard var s = session else { return }
+            s.exercises.removeAll { $0.id == exerciseId }
+            session = s
+            // TODO persist via usecase/repo
+        }
+
 }

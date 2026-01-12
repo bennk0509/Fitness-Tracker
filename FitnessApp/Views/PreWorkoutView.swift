@@ -24,10 +24,6 @@ struct PreWorkoutView: View {
            WorkoutTrackingView(sessionId: sessionID, makeVM: makeTrackingVM)
         } else{
             VStack(spacing:30) {
-//                // STEP PROGRESS BAR
-//                StepProgressBar(step: vm.currentStep, total: vm.totalSteps)
-//                
-                // STEP CONTENT
                 Group {
                     if vm.currentStep == 1 {
                         Step1PreStartWorkout(currentStep: $vm.currentStep, isTemplate: $vm.isTemplate)

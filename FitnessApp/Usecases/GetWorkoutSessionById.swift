@@ -14,8 +14,8 @@ final class GetWorkoutSessionById{
     {
         self.repository = repository
     }
-    func execute(id: UUID) -> WorkoutSession? {
-        repository.fetchWorkout(id: id)
+    func execute(id: UUID) throws -> WorkoutSession? {
+        try repository.fetchWorkout(id: id)
     }
 }
 

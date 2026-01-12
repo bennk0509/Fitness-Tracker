@@ -12,8 +12,9 @@ import SwiftUI
 class MockUpWorkoutRepository: WorkoutSessionRepository{
     private var workouts: [WorkoutSession] = sampleWorkouts
     
-    func fetchWorkout(id: UUID) -> WorkoutSession? {
-        workouts.first(where: { $0.id == id })
+    func fetchWorkout(id: UUID) throws -> WorkoutSession {
+        guard let s = workouts.first(where: { $0.id == id }) else{ throw WorkoutSessionError.notFound }
+        return s
     }
     
     func saveWorkout(_ workout: WorkoutSession) {

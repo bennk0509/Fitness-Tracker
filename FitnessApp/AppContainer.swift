@@ -44,7 +44,7 @@ final class AppContainer {
         self.getAllWorkoutTemplate = GetAllWorkoutTemplate(repository: workoutTemplateRepo)
         self.getWorkoutSessionById = GetWorkoutSessionById(repository: workoutSessionRepo)
         self.getAllExerciseTemplate = GetAllExerciseTemplate(repository: exerciseTemplateRepo)
-
+        
         self.createWorkoutSessionFromTemplate = CreateWorkoutSessionFromTemplate(
             workoutSessionRepository: workoutSessionRepo,
             workoutTemplateRepository: workoutTemplateRepo
@@ -68,7 +68,9 @@ final class AppContainer {
     }
 
     func makeHomeVM() -> HomeViewModel {
-        HomeViewModel(getAllWorkouts: getAllWorkouts, getDailyActivity: getDailyActivity)
+        HomeViewModel(getAllWorkouts: getAllWorkouts,
+                      getDailyActivity: getDailyActivity,
+                      getAllWorkoutTemplate: getAllWorkoutTemplate)
     }
 
     func makeCreateSessionVM() -> CreateWorkoutSessionViewModel {

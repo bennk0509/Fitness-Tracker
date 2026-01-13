@@ -14,8 +14,8 @@ struct PlanView: View {
         ZStack{
             Color.black.ignoresSafeArea()
             VStack{
-                CalendarHorizontal()
-                
+//                CalendarHorizontal()
+//                
                 HStack{
                     VStack(alignment:.leading,spacing: 10){
                         Text("Training day")

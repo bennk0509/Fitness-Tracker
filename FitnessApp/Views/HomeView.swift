@@ -24,27 +24,56 @@ struct HomeView: View {
                         Spacer()
                     }
                     VStack(alignment:.leading){
-                        Text("Activity").font(.system(size: 18, weight: .bold))
-                        HStack(spacing: 14){
-                            StatFitnessCard(iconName: "figure.walk", number: $vm.dailyActivity.steps, text: "Steps")
-                            StatFitnessCard(iconName: "flame.fill", number: $vm.dailyActivity.calories, text: "Cal Out", unit: "Kcal")
-                            StatFitnessCard(iconName: "figure.strengthtraining.traditional", number: $vm.dailyActivity.exercise, text: "Exercise", unit: "min")
+                        CalendarHorizontal(selectedDate: Binding(
+                            get: { vm.selectedDate },
+                            set: { newDate in vm.selectDate(newDate) }
+                        ))
+                        
+                        HStack{
+                            VStack(alignment:.leading,spacing: 10){
+                                Text("Training day")
+                                    .font(.system(size: 18, weight: .bold))
+                                Text("Location")
+                                
+                            }
+                            Spacer()
+                            Button {
+                                print("Start")
+                            } label: {
+                                Text("Start")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.vertical, 20)
+                                    .frame(maxWidth: 100)
+                                    .background(
+                                        Capsule().fill(Color.gray.opacity(0.1))
+                                    )
+                            }
                         }
+                        .padding()
+                        .background(Color("DarkGray"))
+                        .cornerRadius(20)
+                        
                     }
                     
                     VStack(alignment:.leading){
                         HStack{
-                            Text("Recent Workout").font(.system(size: 18, weight: .bold))
+                            Text("Workout Templates").font(.system(size: 18, weight: .bold))
                             Spacer()
                             Text("Show All").font(.system(size: 12, weight: .semibold)).foregroundColor(.gray)
                         }
-                        
-                        LazyVStack(spacing: 20) {
-                            ForEach(vm.workouts) { workout in
+                        let columns = [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12)
+                        ]
+
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(vm.workoutTemplates) { workout in
                                 WorkoutRow(workout: workout)
                             }
                         }
-                        .padding(.horizontal,5)
+                        .padding(.horizontal, 12)
+                        
                     }
                 }.frame(maxWidth: .infinity)
                     .padding(20)
@@ -55,6 +84,12 @@ struct HomeView: View {
 
 #Preview {
     HomeView(
-        vm: HomeViewModel(getAllWorkouts: GetAllWorkouts(repository: MockUpWorkoutRepository()), getDailyActivity: GetDailyActivity(repository: MockupActivityRepository()))
+        vm: HomeViewModel(getAllWorkouts: GetAllWorkouts(repository:
+                                                            MockUpWorkoutRepository()),
+                          getDailyActivity: GetDailyActivity(repository:
+                                                            MockupActivityRepository()),
+                          getAllWorkoutTemplate: GetAllWorkoutTemplate(repository:
+                                                            MockupWorkoutTemplateRepository()),
+                         )
     )
 }

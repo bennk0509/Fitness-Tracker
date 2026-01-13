@@ -8,53 +8,57 @@
 import SwiftUI
 
 struct WorkoutRow: View {
-    var workout: WorkoutSession
+    var workout: WorkoutTemplate
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 15) {
+            // Header: Tên buổi tập + Một icon minh họa
+            HStack {
                 Text(workout.name)
-                    .font(.headline)
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "flame.fill")
-                            .foregroundColor(.orange)
-                        Text("\(workout.calories)")
-                            .font(.system(size: 15))
-                        Text("kcal")
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
-                    }
-                    HStack(spacing: 6) {
-                        Image(systemName: "fitness.timer.fill")
-                            .foregroundColor(.blue)
-                        Text("\(workout.duration)")
-                            .font(.system(size: 15))
-                        Text("min")
-                            .font(.system(size: 13))
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+            }
+            
+            // Exercise List: Làm gọn lại
+            VStack(alignment: .leading, spacing: 8) {
+                // Chỉ hiển thị tối đa 3-4 bài tập để tránh làm Card quá dài
+                ForEach(workout.defaultExercises.prefix(4)) { ex in
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(Color.gray.opacity(0.6))
+                            .frame(width: 4, height: 4)
+                        
+                        Text(ex.name)
+                            .font(.subheadline)
                             .foregroundColor(.gray)
-                    }
-                    HStack(spacing: 6) {
-                        Image(systemName: "calendar")
-                            .foregroundColor(.green)
-                        Text(workout.date.formatted(date: .abbreviated, time: .shortened))
-                            .font(.system(size: 15)).foregroundColor(.gray)
+                            .lineLimit(1)
                     }
                 }
-
-
+                
+                // Nếu có nhiều hơn 4 bài, hiển thị dấu "..."
+                if workout.defaultExercises.count > 4 {
+                    Text("+ \(workout.defaultExercises.count - 4) more")
+                        .font(.caption2)
+                        .foregroundColor(.blue.opacity(0.8))
+                        .padding(.leading, 12)
+                }
             }
-
-            Spacer()
+            
+            Spacer(minLength: 0)
         }
-        .padding(20)
-        .background(Color("DarkGray"))
-        .cornerRadius(20)
-        .shadow(color: .gray.opacity(0.06), radius: 4, x: 0, y: 2)
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color("DarkGray"))
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+        )
     }
 }
 
-
 #Preview {
-    WorkoutRow(workout: sampleWorkouts[0]).padding()
+    WorkoutRow(workout: sampleWorkoutTemplates[0]).padding()
 }

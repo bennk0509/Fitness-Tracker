@@ -35,19 +35,36 @@ import SwiftUI
 class HomeViewModel{
     private let getAllWorkouts: GetAllWorkouts
     private let getDailyActivity: GetDailyActivity
+    private let getAllWorkoutTemplate: GetAllWorkoutTemplate
     
     var workouts: [WorkoutSession] = []
+    var workoutTemplates: [WorkoutTemplate] = []
     var dailyActivity: Activity = Activity(steps: 0, calories: 0, exercise: 0)
     
+    var selectedDate: Date = Calendar.current.startOfDay(for: Date())
+
+    func selectDate(_ date: Date) {
+        selectedDate = date
+//        loadWorkouts(for: date)
+    }
+
     
-    init(getAllWorkouts: GetAllWorkouts, getDailyActivity: GetDailyActivity) {
+    init(getAllWorkouts: GetAllWorkouts,
+         getDailyActivity: GetDailyActivity,
+         getAllWorkoutTemplate: GetAllWorkoutTemplate)
+    {
         self.getAllWorkouts = getAllWorkouts
         self.getDailyActivity = getDailyActivity
+        self.getAllWorkoutTemplate = getAllWorkoutTemplate
         fetchInitialData()
     }
     
     private func fetchInitialData(){
         workouts = getAllWorkouts.execute()
         dailyActivity = getDailyActivity.execute()
+        workoutTemplates = getAllWorkoutTemplate.execute()
+    }
+    
+    func getWorkoutDate(_ date: Date){
     }
 }

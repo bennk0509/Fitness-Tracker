@@ -1,231 +1,119 @@
-//
-//  SampleData.swift
-//  FitnessApp
-//
-//  Created by Khanh Anh Kiet Nguyen on 2025-11-20.
-//
 
 import Foundation
 
-var sampleOneWorkout = WorkoutSession(
-    name: "Full Body Strength",
-    duration: 25,
-    calories: 240,
-    date: Date(),
-    intensity: "Intermediate",
-    exercises: sampleExercises
-)
+struct MockData {
+    // 1. Danh sách bài tập gốc trong Library
+    static let exercises: [Exercise] = [
+            // 1. Chest - Barbell
+            Exercise(
+                name: "Bench Press",
+                primaryMuscle: .chest,
+                secondaryMuscles: [.triceps, .shoulders],
+                instruction: "Lie on a flat bench, lower the bar to mid-chest, and press up.",
+                equipment: .barbell
+            ),
+            
+            // 2. Back - Bodyweight
+            Exercise(
+                name: "Pull Up",
+                primaryMuscle: .back,
+                secondaryMuscles: [.biceps],
+                instruction: "Hang from a bar and pull your body up until your chin clears the bar.",
+                equipment: .bodyweight
+            ),
+            
+            // 3. Legs - Barbell
+            Exercise(
+                name: "Barbell Squat",
+                primaryMuscle: .quads,
+                secondaryMuscles: [.glutes, .hamstrings],
+                instruction: "Rest bar on upper back, squat down until thighs are parallel to floor.",
+                equipment: .barbell
+            ),
+            
+            // 4. Shoulders - Dumbbell
+            Exercise(
+                name: "Dumbbell Lateral Raise",
+                primaryMuscle: .shoulders,
+                instruction: "Lift dumbbells out to your sides until arms are parallel to the floor.",
+                equipment: .dumbbell
+            ),
+            
+            // 5. Arms - Cable
+            Exercise(
+                name: "Tricep Pushdown",
+                primaryMuscle: .triceps,
+                instruction: "Push the cable bar down while keeping your elbows tucked to your sides.",
+                equipment: .cable
+            ),
+            
+            // 6. Abs - Bodyweight
+            Exercise(
+                name: "Plank",
+                primaryMuscle: .abs,
+                instruction: "Hold a push-up position but rest on your forearms instead of hands.",
+                equipment: .bodyweight
+            )
+        ]
 
-// MARK: - Sample Exercises
-let sampleExercises: [Exercise] = [
-    Exercise(
-        name: "Bench Press (Barbell)",
-        sets: [
-            SetLog(setNumber: 1, weight: 40, reps: 12, rest: 90),
-            SetLog(setNumber: 2, weight: 45, reps: 10, rest: 120),
-            SetLog(setNumber: 3, weight: 50, reps: 8, rest: 120 )
-        ],
-        templateID: nil
-    ),
-    
-    Exercise(
-        name: "Lat Pulldown (Machine)",
-        sets: [
-            SetLog(setNumber: 1, weight: 55, reps: 10, rest: 90),
-            SetLog(setNumber: 2, weight: 60, reps: 8, rest: 120)
-        ],
-        templateID: nil
-    )
-]
-
-let sampleWorkouts: [WorkoutSession] = [
-    WorkoutSession(
-        name: "Full Body Strength",
-        duration: 25,
-        calories: 240,
-        date: Date(),
-        intensity: "Intermediate",
-        exercises: sampleExercises
-    ),
-    WorkoutSession(
-        name: "HIIT 10-Min Blast",
-        duration: 10,
-        calories: 150,
-        date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
-        intensity: "Intense"
-    ),
-    WorkoutSession(
-        name: "Yoga Flow",
-        duration: 20,
-        calories: 90,
-        date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!,
-        intensity: "Light"
-    )
-]
-
-var todayActivity: Activity {
-    let steps: Int = 12000
-    let calories: Int = 1200
-    let exercise: Int = 60
-    return Activity(steps: steps, calories: calories, exercise: exercise)
-}
-
-
-
-let sampleWorkoutTemplates: [WorkoutTemplate] = [
-    WorkoutTemplate(
-            name: "Full Body Strength",
-            defaultExercises: [
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Bench Press",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 40, reps: 12, rest: 90),
-                        SetLog(setNumber: 2, weight: 45, reps: 10, rest: 120),
-                        SetLog(setNumber: 3, weight: 50, reps: 8,  rest: 120)
-                    ]
-                ),
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Bench Press",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 40, reps: 12, rest: 90),
-                        SetLog(setNumber: 2, weight: 45, reps: 10, rest: 120),
-                        SetLog(setNumber: 3, weight: 50, reps: 8,  rest: 120)
-                    ]
-                ),
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Lat Pulldown",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 55, reps: 10, rest: 90),
-                        SetLog(setNumber: 2, weight: 60, reps: 8,  rest: 120)
-                    ]
-                )
-            ]
-        ),
-    WorkoutTemplate(
-            name: "Full Body Strength",
-            defaultExercises: [
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Bench Press",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 40, reps: 12, rest: 90),
-                        SetLog(setNumber: 2, weight: 45, reps: 10, rest: 120),
-                        SetLog(setNumber: 3, weight: 50, reps: 8,  rest: 120)
-                    ]
-                ),
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Bench Press",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 40, reps: 12, rest: 90),
-                        SetLog(setNumber: 2, weight: 45, reps: 10, rest: 120),
-                        SetLog(setNumber: 3, weight: 50, reps: 8,  rest: 120)
-                    ]
-                ),
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Lat Pulldown",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 55, reps: 10, rest: 90),
-                        SetLog(setNumber: 2, weight: 60, reps: 8,  rest: 120)
-                    ]
-                )
-            ]
-        ),
-    WorkoutTemplate(
-            name: "Chest Day",
-            defaultExercises: [
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Bench Press",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 40, reps: 12, rest: 90),
-                        SetLog(setNumber: 2, weight: 45, reps: 10, rest: 120),
-                        SetLog(setNumber: 3, weight: 50, reps: 8,  rest: 120)
-                    ]
-                ),
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Bench Press",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 40, reps: 12, rest: 90),
-                        SetLog(setNumber: 2, weight: 45, reps: 10, rest: 120),
-                        SetLog(setNumber: 3, weight: 50, reps: 8,  rest: 120)
-                    ]
-                ),
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Lat Pulldown",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 55, reps: 10, rest: 90),
-                        SetLog(setNumber: 2, weight: 60, reps: 8,  rest: 120)
-                    ]
-                )
-            ]
-        ),
-    WorkoutTemplate(
-            name: "Yoga Flexibility Flow",
-            defaultExercises: [
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Squat",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 8, reps: 10, rest: 20),
-                        SetLog(setNumber: 2, weight: 8, reps: 70, rest: 10)
-                    ]
-                ),
-                ExerciseTemplate(
-                    id: UUID(),
-                    name: "Deadlift",
-                    defaultSets: [
-                        SetLog(setNumber: 1, weight: 8, reps: 10, rest: 20),
-                        SetLog(setNumber: 2, weight: 8, reps: 70, rest: 10)
-                    ]
-                )
-            ]
-        ),
-    WorkoutTemplate(
-        name: "Yoga Flexibility Flow",
-        defaultExercises: [
-            ExerciseTemplate(
+    // 2. Một Template mẫu (Giáo án Ngực)
+    static let chestTemplate = Template(
+        id: UUID(),
+        name: "Chest Day Alpha",
+        exercises: [
+            WorkoutExercise(
                 id: UUID(),
-                name: "Squat",
-                defaultSets: [
-                    SetLog(setNumber: 1, weight: 8, reps: 10, rest: 20),
-                    SetLog(setNumber: 2, weight: 8, reps: 70, rest: 10)
+                exerciseId: exercises[0].id,
+                exerciseName: exercises[0].name,
+                sets: [
+                    WorkoutSet(id: UUID(), weight: 60, reps: 10, isCompleted: false),
+                    WorkoutSet(id: UUID(), weight: 60, reps: 10, isCompleted: false)
                 ]
             ),
-            ExerciseTemplate(
+            WorkoutExercise(
                 id: UUID(),
-                name: "Deadlift",
-                defaultSets: [
-                    SetLog(setNumber: 1, weight: 8, reps: 10, rest: 20),
-                    SetLog(setNumber: 2, weight: 8, reps: 70, rest: 10)
+                exerciseId: exercises[2].id, // Push Up
+                exerciseName: exercises[2].name,
+                sets: [
+                    WorkoutSet(id: UUID(), weight: 0, reps: 20, isCompleted: false)
                 ]
             )
         ]
     )
-]
+}
 
-
-let sampleExerciseTemplates: [ExerciseTemplate] = [
-    ExerciseTemplate(
+extension MockData {
+    // 3. Thông tin User mẫu
+    static let user = User(
         id: UUID(),
-        name: "Squat",
-        defaultSets: [
-            SetLog(setNumber: 1, weight: 8, reps: 10, rest: 20),
-            SetLog(setNumber: 2, weight: 8, reps: 70, rest: 10)
-        ]
-    ),
-    ExerciseTemplate(
-        id: UUID(),
-        name: "Deadlift",
-        defaultSets: [
-            SetLog(setNumber: 1, weight: 8, reps: 10, rest: 20),
-            SetLog(setNumber: 2, weight: 8, reps: 70, rest: 10)
+        name: "Kiet Nguyen",
+        dateOfBirth: Calendar.current.date(byAdding: .year, value: -20, to: Date()),
+        gender: .male,
+        unitSystem: .metric,
+        weightHistory: [
+            BodyMetric(id: UUID(), date: Date().addingTimeInterval(-86400 * 7), weight: 75.0, bodyFat: 15.0, photoData: nil),
+            BodyMetric(id: UUID(), date: Date(), weight: 74.5, bodyFat: 14.8, photoData: nil)
         ]
     )
-]
+
+    // 4. Một buổi tập đã hoàn thành
+    static let pastSession = Session(
+        id: UUID(),
+        templateId: chestTemplate.id,
+        name: "Chest Day Alpha",
+        startTime: Date().addingTimeInterval(-3600), // Tập cách đây 1 tiếng
+        endTime: Date(),
+        notes: "Cảm thấy rất sung sức, bài Push Up hơi mỏi tay sau.",
+        exercises: [
+            WorkoutExercise(
+                id: UUID(),
+                exerciseId: exercises[0].id,
+                exerciseName: exercises[0].name,
+                sets: [
+                    WorkoutSet(id: UUID(), weight: 60, reps: 10, isCompleted: true),
+                    WorkoutSet(id: UUID(), weight: 65, reps: 8, isCompleted: true)
+                ]
+            )
+        ]
+    )
+}
